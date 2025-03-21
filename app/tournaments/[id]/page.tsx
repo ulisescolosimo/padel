@@ -6,9 +6,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Calendar, MapPin, Users, Clock, Trophy, Info, CreditCard, User } from "lucide-react"
+import { Calendar, MapPin, Users, Clock, Trophy, Info, CreditCard, User, ChevronLeft, Share2, Bookmark } from "lucide-react"
 import { useAuth } from "@/lib/auth"
 import { use } from "react"
+import { Progress } from "@/components/ui/progress"
 
 // Datos de ejemplo para los torneos
 const tournaments = [
@@ -140,289 +141,217 @@ export default function TournamentDetailPage({ params }: { params: Promise<{ id:
   }
 
   return (
-    <div className="container px-4 py-12 md:px-6 md:py-16">
-      <div className="mb-6">
-        <Link href="/tournaments" className="text-sm text-blue-600 hover:underline flex items-center">
-          ← Volver a torneos
-        </Link>
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
+      {/* Back Button */}
+      <Link href="/tournaments" className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-8">
+        <ChevronLeft className="h-4 w-4 mr-2" />
+        Volver a Torneos
+      </Link>
+
+      {/* Hero Section */}
+      <div className="relative h-[400px] rounded-xl overflow-hidden mb-8">
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(/tournaments/${tournament.id}-hero.jpg)` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+          <div className="max-w-3xl">
+            <Badge 
+              variant={tournament.status === "Abierto" ? "default" : "secondary"}
+              className="mb-4"
+            >
+              {tournament.status === "Abierto" ? "Inscripciones Abiertas" : "Próximamente"}
+            </Badge>
+            <h1 className="text-4xl font-bold mb-4">{tournament.title}</h1>
+            <div className="flex flex-wrap gap-4 text-sm">
+              <div className="flex items-center">
+                <Calendar className="h-4 w-4 mr-2" />
+                <span>{new Date(tournament.date).toLocaleDateString('es-ES', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}</span>
+              </div>
+              <div className="flex items-center">
+                <MapPin className="h-4 w-4 mr-2" />
+                <span>{tournament.location}</span>
+              </div>
+              <div className="flex items-center">
+                <Users className="h-4 w-4 mr-2" />
+                <span>{tournament.participants.length} / {tournament.slots.split(" ")[0]} parejas</span>
+              </div>
+              <div className="flex items-center">
+                <Trophy className="h-4 w-4 mr-2" />
+                <span>{tournament.price} en premios</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Main Content */}
         <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-start flex-wrap gap-2">
-                <div>
-                  <CardTitle className="text-2xl md:text-3xl">{tournament.title}</CardTitle>
-                  <CardDescription className="mt-2 text-base">{tournament.description}</CardDescription>
-                </div>
-                <Badge variant={tournament.status === "Abierto" ? "default" : "secondary"} className="text-sm">
-                  {tournament.status}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Tabs defaultValue="info">
-                <TabsList className="mb-4">
-                  <TabsTrigger value="info">Información</TabsTrigger>
-                  <TabsTrigger value="rules">Reglas</TabsTrigger>
-                  <TabsTrigger value="participants">Participantes</TabsTrigger>
-                </TabsList>
-                <TabsContent value="info" className="space-y-6">
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="flex items-center">
-                      <Calendar className="mr-2 h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <div className="font-medium">Fecha</div>
-                        <div className="text-sm text-muted-foreground">{tournament.date}</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <Clock className="mr-2 h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <div className="font-medium">Horario</div>
-                        <div className="text-sm text-muted-foreground">{tournament.time}</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <MapPin className="mr-2 h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <div className="font-medium">Ubicación</div>
-                        <div className="text-sm text-muted-foreground">{tournament.location}</div>
-                        <div className="text-xs text-muted-foreground">{tournament.address}</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <Users className="mr-2 h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <div className="font-medium">Plazas</div>
-                        <div className="text-sm text-muted-foreground">
-                          {tournament.participants.length} / {tournament.slots.split(" ")[0]} parejas
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+          <Tabs defaultValue="info" className="w-full">
+            <TabsList className="mb-6">
+              <TabsTrigger value="info">Información</TabsTrigger>
+              <TabsTrigger value="rules">Reglas</TabsTrigger>
+              <TabsTrigger value="participants">Participantes</TabsTrigger>
+            </TabsList>
 
-                  <Separator />
-
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Descripción del torneo</h3>
-                    <p className="text-muted-foreground">{tournament.longDescription}</p>
-                  </div>
-
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Formato</h3>
-                    <div className="flex items-center mb-2">
-                      <Trophy className="mr-2 h-5 w-5 text-muted-foreground" />
-                      <span>{tournament.format}</span>
+            <TabsContent value="info">
+              <Card>
+                <CardContent className="p-6">
+                  <h2 className="text-2xl font-bold mb-4">Sobre el Torneo</h2>
+                  <p className="text-gray-600 mb-6">{tournament.longDescription}</p>
+                  
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="font-semibold mb-2">Categoría y Nivel</h3>
+                      <p className="text-gray-600">{tournament.level}</p>
                     </div>
-                    <div className="flex items-center">
-                      <Info className="mr-2 h-5 w-5 text-muted-foreground" />
-                      <span>Nivel: {tournament.level}</span>
-                    </div>
-                  </div>
 
-                  <Separator />
-
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Premios</h3>
-                    <ul className="list-disc pl-5 space-y-1">
-                      {tournament.prizes.map((prize, index) => (
-                        <li key={index} className="text-muted-foreground">
-                          {prize}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </TabsContent>
-                <TabsContent value="rules">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Reglas del torneo</h3>
-                    <ul className="list-disc pl-5 space-y-2">
-                      {tournament.rules.map((rule, index) => (
-                        <li key={index} className="text-muted-foreground">
-                          {rule}
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="bg-muted p-4 rounded-lg mt-6">
-                      <h4 className="font-medium mb-2">Información importante</h4>
-                      <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
-                        <li>Los horarios pueden estar sujetos a cambios</li>
-                        <li>Es necesario presentar DNI para participar</li>
-                        <li>No se permiten cambios de pareja una vez iniciado el torneo</li>
-                        <li>
-                          La organización se reserva el derecho de modificar el formato según el número de inscritos
-                        </li>
-                      </ul>
+                    <div>
+                      <h3 className="font-semibold mb-2">Progreso de Inscripciones</h3>
+                      <Progress value={(tournament.participants.length / Number.parseInt(tournament.slots.split(" ")[0], 10)) * 100} className="mb-2" />
+                      <p className="text-sm text-gray-600">
+                        {tournament.participants.length} de {tournament.slots.split(" ")[0]} plazas ocupadas
+                      </p>
                     </div>
-                  </div>
-                </TabsContent>
-                <TabsContent value="participants">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Participantes inscritos</h3>
-                    {tournament.participants.length > 0 ? (
-                      <div className="border rounded-lg divide-y">
-                        {tournament.participants.map((participant, index) => (
-                          <div key={index} className="flex items-center justify-between p-4">
-                            <div className="flex items-center">
-                              <User className="mr-2 h-5 w-5 text-muted-foreground" />
-                              <span>{participant.name}</span>
-                            </div>
-                            <Badge variant="outline">{participant.category}</Badge>
+
+                    <div>
+                      <h3 className="font-semibold mb-2">Premios</h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        {tournament.prizes.map((prize, index) => (
+                          <div key={index} className="bg-gray-50 p-4 rounded-lg text-center">
+                            <div className="font-bold text-lg">{prize}</div>
                           </div>
                         ))}
                       </div>
-                    ) : (
-                      <div className="text-center py-8">
-                        <p className="text-muted-foreground">Aún no hay participantes inscritos</p>
-                        {tournament.status === "Abierto" && (
-                          <p className="mt-2 text-sm">¡Sé el primero en inscribirte!</p>
-                        )}
-                      </div>
-                    )}
-                    <div className="bg-muted p-4 rounded-lg mt-4">
-                      <p className="text-sm text-muted-foreground">
-                        Plazas disponibles:{" "}
-                        {Number.parseInt(tournament.slots.split(" ")[0], 10) - tournament.participants.length} de{" "}
-                        {tournament.slots.split(" ")[0]}
-                      </p>
                     </div>
                   </div>
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="rules">
+              <Card>
+                <CardContent className="p-6">
+                  <h2 className="text-2xl font-bold mb-6">Reglas del Torneo</h2>
+                  <ul className="space-y-4">
+                    {tournament.rules.map((rule, index) => (
+                      <li key={index} className="flex items-start">
+                        <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 flex-shrink-0">
+                          {index + 1}
+                        </div>
+                        <span className="text-gray-600">{rule}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="participants">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Participantes inscritos</h3>
+                {tournament.participants.length > 0 ? (
+                  <div className="border rounded-lg divide-y">
+                    {tournament.participants.map((participant, index) => (
+                      <div key={index} className="flex items-center justify-between p-4">
+                        <div className="flex items-center">
+                          <User className="mr-2 h-5 w-5 text-muted-foreground" />
+                          <span>{participant.name}</span>
+                        </div>
+                        <Badge variant="outline">{participant.category}</Badge>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">Aún no hay participantes inscritos</p>
+                    {tournament.status === "Abierto" && (
+                      <p className="mt-2 text-sm">¡Sé el primero en inscribirte!</p>
+                    )}
+                  </div>
+                )}
+                <div className="bg-muted p-4 rounded-lg mt-4">
+                  <p className="text-sm text-muted-foreground">
+                    Plazas disponibles:{" "}
+                    {Number.parseInt(tournament.slots.split(" ")[0], 10) - tournament.participants.length} de{" "}
+                    {tournament.slots.split(" ")[0]}
+                  </p>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
 
-        <div>
+        {/* Sidebar */}
+        <div className="space-y-6">
           <Card>
-            <CardHeader>
-              <CardTitle>Inscripción</CardTitle>
-              <CardDescription>Completa tu inscripción al torneo</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="bg-muted p-4 rounded-lg">
-                  <div className="text-sm text-muted-foreground">Precio por pareja</div>
-                  <div className="text-2xl font-bold">{tournament.price}</div>
+            <CardContent className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <h2 className="text-xl font-bold">Inscripción</h2>
+                <div className="flex space-x-2">
+                  <Button variant="outline" size="icon">
+                    <Share2 className="h-4 w-4" />
+                  </Button>
+                  <Button variant="outline" size="icon">
+                    <Bookmark className="h-4 w-4" />
+                  </Button>
                 </div>
-                <div className="flex items-center text-sm">
-                  <CreditCard className="mr-2 h-4 w-4 text-muted-foreground" />
-                  <span>Pago seguro con tarjeta o transferencia</span>
+              </div>
+              <div className="space-y-4">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Precio por pareja</span>
+                  <span className="font-semibold">{tournament.price}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Plazas disponibles</span>
+                  <span className="font-semibold">{Number.parseInt(tournament.slots.split(" ")[0], 10) - tournament.participants.length}</span>
+                </div>
+                <div className="pt-4 border-t">
+                  {user ? (
+                    <Link href={`/tournaments/${resolvedParams.id}/register`} className="w-full">
+                      <Button className="w-full" size="lg" disabled={tournament.status !== "Abierto"}>
+                        {tournament.status === "Abierto" ? "Inscribirse ahora" : "Inscripción no disponible"}
+                      </Button>
+                    </Link>
+                  ) : (
+                    <>
+                      <Link href="/auth/login" className="w-full">
+                        <Button className="w-full" size="lg">
+                          Iniciar sesión para inscribirse
+                        </Button>
+                      </Link>
+                      <p className="text-sm text-muted-foreground text-center">
+                        ¿No tienes cuenta?{" "}
+                        <Link href="/auth/register" className="text-blue-600 hover:underline">
+                          Regístrate
+                        </Link>
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="flex flex-col gap-4">
-              {user ? (
-                <Link href={`/tournaments/${resolvedParams.id}/register`} className="w-full">
-                  <Button className="w-full" size="lg" disabled={tournament.status !== "Abierto"}>
-                    {tournament.status === "Abierto" ? "Inscribirse ahora" : "Inscripción no disponible"}
-                  </Button>
-                </Link>
-              ) : (
-                <>
-                  <Link href="/auth/login" className="w-full">
-                    <Button className="w-full" size="lg">
-                      Iniciar sesión para inscribirse
-                    </Button>
-                  </Link>
-                  <p className="text-sm text-muted-foreground text-center">
-                    ¿No tienes cuenta?{" "}
-                    <Link href="/auth/register" className="text-blue-600 hover:underline">
-                      Regístrate
-                    </Link>
-                  </p>
-                </>
-              )}
-              <p className="text-xs text-muted-foreground text-center">
-                Al inscribirte aceptas las reglas del torneo y la política de cancelación
-              </p>
-            </CardFooter>
           </Card>
 
-          {tournament.status === "Abierto" && (
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle>Comparte este torneo</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-center gap-4">
-                  <Button variant="outline" size="icon">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-5 w-5"
-                    >
-                      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-                    </svg>
-                    <span className="sr-only">Facebook</span>
-                  </Button>
-                  <Button variant="outline" size="icon">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-5 w-5"
-                    >
-                      <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
-                    </svg>
-                    <span className="sr-only">Twitter</span>
-                  </Button>
-                  <Button variant="outline" size="icon">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-5 w-5"
-                    >
-                      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-                    </svg>
-                    <span className="sr-only">Instagram</span>
-                  </Button>
-                  <Button variant="outline" size="icon">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-5 w-5"
-                    >
-                      <path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6z" />
-                      <polyline points="2 6 12 13 22 6" />
-                    </svg>
-                    <span className="sr-only">Email</span>
-                  </Button>
+          <Card>
+            <CardContent className="p-6">
+              <h2 className="text-xl font-bold mb-4">Organizador</h2>
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 rounded-full bg-gray-200" />
+                <div>
+                  <div className="font-semibold">Academia de Padel</div>
+                  <div className="text-sm text-gray-600">Organizador oficial</div>
                 </div>
-              </CardContent>
-            </Card>
-          )}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

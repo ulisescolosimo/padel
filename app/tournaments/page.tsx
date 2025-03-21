@@ -7,55 +7,50 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar, MapPin, Trophy, Search, Filter } from "lucide-react"
+import { Calendar, MapPin, Trophy, Search, Filter, Users, Clock, ChevronRight } from "lucide-react"
 import { useAuth } from "@/lib/auth"
 
 // Datos de ejemplo para los torneos
 const tournaments = [
   {
-    id: "1",
-    title: "Torneo Primavera",
-    description: "Torneo de nivel intermedio con premios para los ganadores",
-    date: "15 de Mayo, 2025",
-    location: "Pistas Centrales",
+    id: 1,
+    title: "Torneo de Verano 2025",
+    date: "2025-07-15",
+    location: "Pista Central",
+    participants: 32,
+    maxParticipants: 64,
+    category: "Mixto",
     level: "Intermedio",
-    status: "Abierto",
-    slots: "16 parejas",
-    price: "€50 por pareja",
+    prize: "1000€",
+    status: "open",
+    image: "/tournaments/summer-tournament.jpg"
   },
   {
-    id: "2",
-    title: "Copa Elite",
-    description: "Torneo de alto nivel con los mejores jugadores de la academia",
-    date: "2 de Junio, 2025",
-    location: "Pistas Premium",
+    id: 2,
+    title: "Campeonato Nacional",
+    date: "2025-08-01",
+    location: "Pista Premium",
+    participants: 48,
+    maxParticipants: 64,
+    category: "Masculino",
     level: "Avanzado",
-    status: "Abierto",
-    slots: "8 parejas",
-    price: "€80 por pareja",
+    prize: "2000€",
+    status: "open",
+    image: "/tournaments/national-championship.jpg"
   },
   {
-    id: "3",
-    title: "Torneo Amistoso",
-    description: "Torneo para principiantes y jugadores que quieren mejorar su nivel",
-    date: "20 de Mayo, 2025",
-    location: "Pistas Auxiliares",
-    level: "Principiante",
-    status: "Abierto",
-    slots: "24 parejas",
-    price: "€30 por pareja",
-  },
-  {
-    id: "4",
-    title: "Campeonato Mensual",
-    description: "Torneo mensual con diferentes categorías y niveles",
-    date: "10 de Junio, 2025",
-    location: "Todas las pistas",
+    id: 3,
+    title: "Torneo de Invierno",
+    date: "2025-12-10",
+    location: "Pista Indoor",
+    participants: 16,
+    maxParticipants: 32,
+    category: "Femenino",
     level: "Todos los niveles",
-    status: "Próximamente",
-    slots: "32 parejas",
-    price: "€60 por pareja",
-  },
+    prize: "800€",
+    status: "coming_soon",
+    image: "/tournaments/winter-tournament.jpg"
+  }
 ]
 
 export default function TournamentsPage() {
@@ -65,8 +60,7 @@ export default function TournamentsPage() {
 
   const filteredTournaments = tournaments.filter((tournament) => {
     const matchesSearch =
-      tournament.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      tournament.description.toLowerCase().includes(searchTerm.toLowerCase())
+      tournament.title.toLowerCase().includes(searchTerm.toLowerCase())
 
     const matchesLevel = levelFilter === "all" || tournament.level === levelFilter
 
@@ -74,104 +68,131 @@ export default function TournamentsPage() {
   })
 
   return (
-    <div className="container px-4 py-12 md:px-6 md:py-16">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Torneos</h1>
-          <p className="text-muted-foreground mt-1">Descubre y participa en nuestros torneos de padel</p>
-        </div>
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
+      {/* Header Section */}
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold tracking-tight mb-4">Torneos de Padel</h1>
+        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          Participa en los mejores torneos organizados por nuestra academia. 
+          Encuentra el torneo perfecto para tu nivel y compite por premios increíbles.
+        </p>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 mb-8">
-        <div className="relative flex-1">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Buscar torneos..."
-            className="pl-8"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <div className="w-full md:w-64">
-          <Select value={levelFilter} onValueChange={setLevelFilter}>
+      {/* Search and Filter Section */}
+      <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="md:col-span-2">
+            <Input 
+              type="search" 
+              placeholder="Buscar torneos..." 
+              className="w-full"
+            />
+          </div>
+          <Select>
             <SelectTrigger>
-              <div className="flex items-center">
-                <Filter className="mr-2 h-4 w-4" />
-                <SelectValue placeholder="Filtrar por nivel" />
-              </div>
+              <SelectValue placeholder="Categoría" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas las categorías</SelectItem>
+              <SelectItem value="masculino">Masculino</SelectItem>
+              <SelectItem value="femenino">Femenino</SelectItem>
+              <SelectItem value="mixto">Mixto</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder="Nivel" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos los niveles</SelectItem>
-              <SelectItem value="Principiante">Principiante</SelectItem>
-              <SelectItem value="Intermedio">Intermedio</SelectItem>
-              <SelectItem value="Avanzado">Avanzado</SelectItem>
-              <SelectItem value="Todos los niveles">Mixto</SelectItem>
+              <SelectItem value="principiante">Principiante</SelectItem>
+              <SelectItem value="intermedio">Intermedio</SelectItem>
+              <SelectItem value="avanzado">Avanzado</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filteredTournaments.length > 0 ? (
-          filteredTournaments.map((tournament) => (
-            <Card key={tournament.id} className="flex flex-col">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <CardTitle>{tournament.title}</CardTitle>
-                  <Badge variant={tournament.status === "Abierto" ? "default" : "secondary"}>{tournament.status}</Badge>
+      {/* Tournaments Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {tournaments.map((tournament) => (
+          <Card key={tournament.id} className="group hover:shadow-lg transition-shadow duration-200">
+            <CardHeader className="relative p-0">
+              <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
+                <div 
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
+                  style={{ backgroundImage: `url(${tournament.image})` }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4">
+                  <Badge 
+                    variant={tournament.status === "open" ? "default" : "secondary"}
+                    className="mb-2"
+                  >
+                    {tournament.status === "open" ? "Inscripciones Abiertas" : "Próximamente"}
+                  </Badge>
+                  <h3 className="text-xl font-bold text-white">{tournament.title}</h3>
                 </div>
-                <CardDescription>{tournament.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-1">
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center">
-                    <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
-                    <span>{tournament.date}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <MapPin className="mr-2 h-4 w-4 text-muted-foreground" />
-                    <span>{tournament.location}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Trophy className="mr-2 h-4 w-4 text-muted-foreground" />
-                    <span>Nivel: {tournament.level}</span>
-                  </div>
-                  <div className="mt-4 flex justify-between items-center">
-                    <span className="font-medium">{tournament.price}</span>
-                    <span className="text-muted-foreground text-xs">{tournament.slots}</span>
-                  </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                <div className="flex items-center text-gray-600">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  <span>{new Date(tournament.date).toLocaleDateString('es-ES', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}</span>
                 </div>
-              </CardContent>
-              <CardFooter>
-                <Link href={`/tournaments/${tournament.id}`} className="w-full">
-                  <Button className="w-full" variant={tournament.status === "Abierto" ? "default" : "outline"}>
-                    {tournament.status === "Abierto" ? "Ver detalles" : "Más información"}
-                  </Button>
-                </Link>
-              </CardFooter>
-            </Card>
-          ))
-        ) : (
-          <div className="col-span-full text-center py-12">
-            <h3 className="text-lg font-medium">No se encontraron torneos</h3>
-            <p className="text-muted-foreground mt-1">Intenta cambiar los filtros o busca con otros términos</p>
-          </div>
-        )}
+                <div className="flex items-center text-gray-600">
+                  <MapPin className="h-4 w-4 mr-2" />
+                  <span>{tournament.location}</span>
+                </div>
+                <div className="flex items-center text-gray-600">
+                  <Users className="h-4 w-4 mr-2" />
+                  <span>{tournament.participants}/{tournament.maxParticipants} participantes</span>
+                </div>
+                <div className="flex items-center text-gray-600">
+                  <Trophy className="h-4 w-4 mr-2" />
+                  <span>{tournament.prize} en premios</span>
+                </div>
+                <div className="flex items-center text-gray-600">
+                  <Clock className="h-4 w-4 mr-2" />
+                  <span>{tournament.category} - {tournament.level}</span>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="p-6 pt-0">
+              <Link href={`/tournaments/${tournament.id}`} className="w-full">
+                <Button className="w-full group-hover:bg-blue-700 transition-colors duration-200">
+                  Ver Detalles
+                  <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
+                </Button>
+              </Link>
+            </CardFooter>
+          </Card>
+        ))}
       </div>
 
-      {user && (
-        <div className="mt-12 text-center">
-          <h2 className="text-2xl font-bold mb-4">¿Quieres organizar tu propio torneo?</h2>
-          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Si eres miembro de nuestra academia, puedes solicitar la organización de un torneo personalizado para ti y
-            tus amigos.
-          </p>
-          <Link href="/tournaments/request">
-            <Button size="lg">Solicitar torneo</Button>
-          </Link>
+      {/* Newsletter Section */}
+      <div className="mt-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-8 text-white">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-2xl font-bold mb-4">¿No quieres perderte ningún torneo?</h2>
+          <p className="mb-6">Suscríbete a nuestro newsletter y recibe las últimas novedades y ofertas especiales.</p>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Input 
+              type="email" 
+              placeholder="Tu email" 
+              className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/60"
+            />
+            <Button className="bg-white text-blue-600 hover:bg-blue-50">
+              Suscribirse
+            </Button>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }
