@@ -10,8 +10,8 @@ import { Calendar, MapPin, Trophy, Clock, AlertCircle } from "lucide-react"
 import ProtectedRoute from "@/components/protected-route"
 import { useAuth } from "@/lib/auth"
 
-// Datos de ejemplo para los torneos
-const userTournaments = [
+// Datos de ejemplo para los tournaments
+const usertournaments = [
   {
     id: 1,
     title: "Torneo Primavera",
@@ -34,8 +34,8 @@ const userTournaments = [
   },
 ]
 
-// Datos de ejemplo para torneos pasados
-const pastTournaments = [
+// Datos de ejemplo para tournaments pasados
+const pasttournaments = [
   {
     id: 5,
     title: "Torneo de Invierno",
@@ -81,7 +81,7 @@ export default function DashboardPage() {
           </div>
           <div className="mt-4 md:mt-0 flex gap-4">
             <Link href="/tournaments">
-              <Button variant="outline">Ver torneos</Button>
+              <Button variant="outline">Ver tournaments</Button>
             </Link>
             <Link href="/dashboard/profile">
               <Button>Mi perfil</Button>
@@ -92,8 +92,8 @@ export default function DashboardPage() {
         <div className="grid gap-8 md:grid-cols-3">
           <Card className="md:col-span-2">
             <CardHeader>
-              <CardTitle>Mis Torneos</CardTitle>
-              <CardDescription>Gestiona tus inscripciones a torneos</CardDescription>
+              <CardTitle>Mis tournaments</CardTitle>
+              <CardDescription>Gestiona tus inscripciones a tournaments</CardDescription>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="active">
@@ -102,9 +102,9 @@ export default function DashboardPage() {
                   <TabsTrigger value="past">Pasados</TabsTrigger>
                 </TabsList>
                 <TabsContent value="active">
-                  {userTournaments.length > 0 ? (
+                  {usertournaments.length > 0 ? (
                     <div className="space-y-4">
-                      {userTournaments.map((tournament) => (
+                      {usertournaments.map((tournament) => (
                         <div
                           key={tournament.id}
                           className="flex flex-col md:flex-row justify-between p-4 border rounded-lg"
@@ -160,18 +160,18 @@ export default function DashboardPage() {
                   ) : (
                     <div className="flex flex-col items-center justify-center py-8 text-center">
                       <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
-                      <h3 className="text-lg font-medium">No tienes torneos activos</h3>
+                      <h3 className="text-lg font-medium">No tienes tournaments activos</h3>
                       <p className="text-muted-foreground mt-1 mb-4">Inscríbete en un torneo para verlo aquí</p>
                       <Link href="/tournaments">
-                        <Button>Ver torneos disponibles</Button>
+                        <Button>Ver tournaments disponibles</Button>
                       </Link>
                     </div>
                   )}
                 </TabsContent>
                 <TabsContent value="past">
-                  {pastTournaments.length > 0 ? (
+                  {pasttournaments.length > 0 ? (
                     <div className="space-y-4">
-                      {pastTournaments.map((tournament) => (
+                      {pasttournaments.map((tournament) => (
                         <div
                           key={tournament.id}
                           className="flex flex-col md:flex-row justify-between p-4 border rounded-lg"
@@ -219,9 +219,9 @@ export default function DashboardPage() {
                   ) : (
                     <div className="flex flex-col items-center justify-center py-8 text-center">
                       <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
-                      <h3 className="text-lg font-medium">No tienes torneos pasados</h3>
+                      <h3 className="text-lg font-medium">No tienes tournaments pasados</h3>
                       <p className="text-muted-foreground mt-1">
-                        Aquí aparecerán los torneos en los que has participado
+                        Aquí aparecerán los tournaments en los que has participado
                       </p>
                     </div>
                   )}
@@ -233,7 +233,7 @@ export default function DashboardPage() {
           <Card>
             <CardHeader>
               <CardTitle>Próximos eventos</CardTitle>
-              <CardDescription>Torneos y eventos destacados</CardDescription>
+              <CardDescription>tournaments y eventos destacados</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">

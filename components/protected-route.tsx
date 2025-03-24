@@ -13,7 +13,7 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ children, requireAdmin = false }: ProtectedRouteProps) {
-  const { user, isLoading, isAdmin } = useAuth()
+  const { user } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
 

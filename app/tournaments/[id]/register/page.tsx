@@ -18,7 +18,7 @@ import ProtectedRoute from "@/components/protected-route"
 import { useAuth } from "@/lib/auth"
 import { use } from "react"
 
-// Datos de ejemplo para los torneos
+// Datos de ejemplo para los tournaments
 const tournaments = [
   {
     id: "1",
@@ -90,7 +90,7 @@ export default function TournamentRegisterPage({ params }: { params: Promise<{ i
       setIsSubmitting(false)
       toast({
         title: "Inscripción completada",
-        description: "Te has inscrito correctamente al torneo",
+        description: "Te has inscripto correctamente al torneo",
       })
       router.push("/dashboard")
     }, 2000)
@@ -102,7 +102,7 @@ export default function TournamentRegisterPage({ params }: { params: Promise<{ i
         <h1 className="text-3xl font-bold">Torneo no encontrado</h1>
         <p className="mt-4 text-muted-foreground">El torneo que buscas no existe o ha sido eliminado.</p>
         <Link href="/tournaments" className="mt-6 inline-block">
-          <Button>Ver todos los torneos</Button>
+          <Button>Ver todos los tournaments</Button>
         </Link>
       </div>
     )
@@ -110,7 +110,7 @@ export default function TournamentRegisterPage({ params }: { params: Promise<{ i
 
   return (
     <ProtectedRoute>
-      <div className="container px-4 py-12 md:px-6 md:py-16">
+      <div className="w-full px-4 py-8 md:px-6 md:py-12">
         <div className="mb-6">
           <Link href={`/tournaments/${resolvedParams.id}`} className="text-sm text-blue-600 hover:underline flex items-center">
             ← Volver al torneo

@@ -285,7 +285,7 @@ export default function ProfilePage() {
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Torneos jugados</span>
+                    <span className="text-muted-foreground">tournaments jugados</span>
                     <span className="font-medium">5</span>
                   </div>
                   <div className="flex justify-between">

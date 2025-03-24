@@ -154,7 +154,7 @@ export default function BookingsPage() {
                     <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
                     <h3 className="text-lg font-medium">No tienes reservas activas</h3>
                     <p className="text-muted-foreground mt-1 mb-4">Realiza una reserva para verla aquí</p>
-                    <Link href="/courts">
+                    <Link href="/#">
                       <Button>Reservar pista</Button>
                     </Link>
                   </div>

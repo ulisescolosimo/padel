@@ -1,111 +1,93 @@
 "use client"; // 🚀 Obligatorio para usar React Context en Next.js (app router)
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { signOut, useSession, signIn } from 'next-auth/react';
 
 export interface User {
   id: string;
   name: string;
   email: string;
-  role: "admin" | "user";
-  avatar: string;
-  phone?: string; // 📌 Opcional si no siempre está presente
-  level?: string; // 📌 Se usa en el perfil, debe estar definido
-  createdAt: string | Date; // 📌 Para manejar fechas correctamente
+  image?: string;
+  role: 'user' | 'admin';
+  level?: string;
+  phone?: string;
+  createdAt?: Date;
+  isProfileComplete?: boolean;
+  avatar?: string;
 }
 
-
-// Definir el tipo del contexto
 interface AuthContextType {
   user: User | null;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (name: string, email: string, password: string) => Promise<boolean>;
-  logout: () => void;
-  isAdmin: boolean;
+  loading: boolean;
+  logout: () => Promise<void>;
+  signIn: (provider: string, options?: any) => Promise<void>;
+  update: (data: Partial<User>) => Promise<void>;
 }
 
-// Crear el contexto con tipado correcto
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  loading: true,
+  logout: async () => {},
+  signIn: async () => {},
+  update: async () => {},
+});
 
-// Proveedor de autenticación
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const { data: session, status } = useSession();
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    if (status === 'loading') {
+      setLoading(true);
+    } else if (session?.user) {
+      setUser({
+        id: session.user.id,
+        name: session.user.name || '',
+        email: session.user.email || '',
+        image: session.user.image,
+        role: session.user.role || 'user',
+        level: session.user.level,
+        phone: session.user.phone,
+        createdAt: session.user.createdAt,
+        isProfileComplete: session.user.isProfileComplete,
+        avatar: session.user.avatar,
+      });
+    } else {
+      setUser(null);
     }
-    setIsLoading(false);
-  }, []);
+    setLoading(false);
+  }, [session, status]);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
-    setIsLoading(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-  
-      if (email === "admin@example.com" && password === "password") {
-        setUser({
-          id: "1",
-          name: "Admin Usuario",
-          email,
-          role: "admin",
-          avatar: "/placeholder.svg?height=128&width=128",
-          phone: "666123456",
-          level: "Avanzado",
-          createdAt: "2023-01-15",
-        });
-        return true;
-      } else if (email === "user@example.com" && password === "password") {
-        setUser({
-          id: "2",
-          name: "Usuario Normal",
-          email,
-          role: "user",
-          avatar: "/placeholder.svg?height=128&width=128",
-          phone: "666789012",
-          level: "Intermedio",
-          createdAt: "2023-03-20",
-        });
-        return true;
-      }
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
-
-  const register = async (name: string, email: string, password: string): Promise<boolean> => {
-    setIsLoading(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      return true;
-    } finally {
-      setIsLoading(false);
-    }
+  const logout = async () => {
+    await signOut({ callbackUrl: '/' });
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("user");
+  const handleSignIn = async (provider: string, options?: any) => {
+    await signIn(provider, options);
   };
 
-  const isAdmin = user?.role === "admin";
+  const handleUpdate = async (data: Partial<User>) => {
+    if (user) {
+      setUser({ ...user, ...data });
+    }
+  };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, logout, isAdmin }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        logout,
+        signIn: handleSignIn,
+        update: handleUpdate,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 }
 
-// Hook para acceder al contexto
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth debe usarse dentro de un AuthProvider");
-  }
-  return context;
-}
+export const useAuth = () => useContext(AuthContext);
