@@ -61,6 +61,7 @@ export default function TournamentRegisterPage({ params }: { params: Promise<{ i
   const router = useRouter()
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false)
 
   const [formData, setFormData] = useState({
     partnerName: "",
@@ -71,7 +72,7 @@ export default function TournamentRegisterPage({ params }: { params: Promise<{ i
     acceptTerms: false,
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!formData.acceptTerms) {
@@ -84,16 +85,39 @@ export default function TournamentRegisterPage({ params }: { params: Promise<{ i
     }
 
     setIsSubmitting(true)
+    setIsProcessingPayment(true)
 
-    // Simulación de inscripción
-    setTimeout(() => {
-      setIsSubmitting(false)
-      toast({
-        title: "Inscripción completada",
-        description: "Te has inscripto correctamente al torneo",
+    try {
+      // Crear el pago en MercadoPago
+      const response = await fetch('/api/payments/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tournamentId: resolvedParams.id,
+        }),
       })
-      router.push("/dashboard")
-    }, 2000)
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al crear el pago')
+      }
+
+      // Redirigir a MercadoPago
+      window.location.href = data.initPoint
+    } catch (error) {
+      console.error('Error:', error)
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Error al procesar el pago. Por favor, intenta de nuevo.",
+      })
+    } finally {
+      setIsSubmitting(false)
+      setIsProcessingPayment(false)
+    }
   }
 
   if (!tournament) {
@@ -263,11 +287,11 @@ export default function TournamentRegisterPage({ params }: { params: Promise<{ i
                   <Button variant="outline" type="button" disabled={isSubmitting} onClick={() => router.back()}>
                     Cancelar
                   </Button>
-                  <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? (
+                  <Button type="submit" disabled={isSubmitting || isProcessingPayment}>
+                    {isSubmitting || isProcessingPayment ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Procesando...
+                        {isProcessingPayment ? "Procesando pago..." : "Procesando..."}
                       </>
                     ) : (
                       "Completar inscripción"
