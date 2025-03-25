@@ -5,18 +5,18 @@ import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { useToast } from "@/components/ui/use-toast"
+import { Button } from "../../../components/button"
 import { Loader2, CreditCard, Calendar, Trophy } from "lucide-react"
 import ProtectedRoute from "@/components/protected-route"
 import { useAuth } from "@/lib/auth"
 import { use } from "react"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/app/components/card"
+import { Label } from "@/app/components/label"
+import { Separator } from "@radix-ui/react-dropdown-menu"
+import { Input } from "@/app/components/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/select"
+import { Checkbox } from "@/app/components/checkbox"
+import { useToast } from "@/app/components/use-toast"
 
 // Datos de ejemplo para los tournaments
 const tournaments = [
@@ -247,7 +247,7 @@ export default function TournamentRegisterPage({ params }: { params: Promise<{ i
                     <Checkbox
                       id="terms"
                       checked={formData.acceptTerms}
-                      onCheckedChange={(checked) => setFormData({ ...formData, acceptTerms: checked as boolean })}
+                      onCheckedChange={(checked:any) => setFormData({ ...formData, acceptTerms: checked as boolean })}
                       disabled={isSubmitting}
                     />
                     <Label htmlFor="terms" className="text-sm">
