@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signOut, useSession, signIn } from 'next-auth/react';
+import { getBaseUrl } from './config';
 
 export interface User {
   id: string;
@@ -62,11 +63,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [session, status]);
 
   const logout = async () => {
-    await signOut({ callbackUrl: '/' });
+    try {
+      const baseUrl = getBaseUrl();
+      await signOut({ 
+        callbackUrl: `${baseUrl}/`,
+        redirect: true 
+      });
+      setUser(null);
+      router.push('/');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   };
 
   const handleSignIn = async (provider: string, options?: any) => {
-    await signIn(provider, options);
+    try {
+      await signIn(provider, {
+        ...options,
+        callbackUrl: options?.callbackUrl || '/dashboard'
+      });
+    } catch (error) {
+      console.error('Error during sign in:', error);
+    }
   };
 
   const handleUpdate = async (data: Partial<User>) => {
