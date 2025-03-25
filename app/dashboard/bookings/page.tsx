@@ -2,13 +2,13 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Button } from "@/app/components/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/card"
+import { Badge } from "@/app/components/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/tabs"
 import { Calendar, Clock, MapPin, Users, AlertCircle } from "lucide-react"
 import ProtectedRoute from "@/components/protected-route"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/app/components/use-toast"
 
 // Datos de ejemplo para las reservas
 const activeBookings = [

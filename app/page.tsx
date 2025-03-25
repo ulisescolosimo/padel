@@ -1,7 +1,7 @@
 'use client'
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/components/button";
 import {
   Trophy,
   Calendar,
@@ -38,7 +38,7 @@ export default function Home() {
                   className="group relative px-8 py-6 text-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                 >
                   <span className="relative z-10 flex items-center">
-                    Ver tournaments
+                    Ver torneos
                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>

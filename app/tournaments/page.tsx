@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Button } from "../components/button"
+import { Card } from "../components/card"
+import { Badge } from "../components/badge"
 import { Calendar, MapPin, Users, Trophy, Clock, DollarSign, Plus } from "lucide-react"
 import { useAuth } from "@/lib/auth"
 import { format } from "date-fns"
@@ -155,10 +155,10 @@ export default function TournamentsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredTournaments.map((tournament) => {
+            console.log(tournament)
             const availablePlaces = tournament.totalPlaces - tournament.participants.length
-
-            const isRegistered = tournament?.participants.some(
-              participant => participant.player._id === user?.id
+            const isRegistered = Boolean(user?.id) && tournament.participants.some(
+              participant => participant?.player?.toString() === user?.id?.toString()
             )
 
             return (
@@ -222,14 +222,14 @@ export default function TournamentsPage() {
                   {tournament.status === 'published' && (
                     <div className="mt-4 pt-4 border-t border-gray-700">
                       {!user ? (
-                        <p className="text-yellow-500 text-sm">Inicia sesión para registrarte</p>
+                        <p className="text-yellow-500 text-sm text-center">Inicia sesión para inscribirte</p>
                       ) : isRegistered ? (
                         <div className="flex flex-col gap-2">
                           <Button 
-                            className="w-full bg-blue-600 hover:bg-blue-700"
+                            className="w-full text-white bg-blue-600 hover:bg-blue-700"
                             onClick={(e) => {
                               e.stopPropagation()
-                              router.push(`/tournaments/${tournament._id}/details`)
+                              router.push(`/tournaments/${tournament._id}`)
                             }}
                           >
                             Ver detalles de inscripción
@@ -246,7 +246,20 @@ export default function TournamentsPage() {
                           Registrarse
                         </Button>
                       ) : (
-                        <p className="text-red-500 text-sm">No hay plazas disponibles</p>
+                        <div className="flex flex-col gap-2">
+                          <p className="text-red-500 text-sm">No hay plazas disponibles</p>
+                          {isRegistered && (
+                            <Button 
+                              className="w-full  bg-blue-600 hover:bg-blue-700"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                router.push(`/tournaments/${tournament._id}`)
+                              }}
+                            >
+                              Ver detalles de inscripción
+                            </Button>
+                          )}
+                        </div>
                       )}
                     </div>
                   )}

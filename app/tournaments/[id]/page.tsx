@@ -2,14 +2,15 @@
 
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
 import { Calendar, MapPin, Users, Trophy, Clock, DollarSign, AlertCircle } from "lucide-react"
 import { useAuth } from "@/lib/auth"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
 import { ITournament } from '@/models/Tournament'
+import { Button } from "@/app/components/button"
+import { Badge } from "@/app/components/badge"
+import { Card } from "@/app/components/card"
 
 interface Tournament extends ITournament {
   _id: string
@@ -71,20 +72,25 @@ export default function TournamentDetail() {
   if (!tournament) return <div className="min-h-screen flex items-center justify-center">Torneo no encontrado</div>
 
   const isRegistered = tournament?.participants.some(
-    participant => participant.player._id.toString() === user?.id
+    participant => participant?.player?._id.toString() === user?.id
   )
 
   const availablePlaces = tournament.totalPlaces - tournament.participants.length
 
   return (
-    <div className="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-900 py-6 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
+        <Link href="/tournaments" className="inline-block mb-6">
+          <Button variant="outline" size="sm" className="text-gray-300 hover:text-white">
+            ← Volver a torneos
+          </Button>
+        </Link>
         <div className="bg-gray-800 rounded-lg shadow-xl overflow-hidden">
           {/* Header */}
           <div className="px-6 py-8 border-b border-gray-700">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0">
               <h1 className="text-3xl font-bold text-white">{tournament.name}</h1>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 {isRegistered && (
                   <Badge variant="success" className="bg-green-600">
                     Inscripto

@@ -2,16 +2,16 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/app/components/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/card"
+import { Badge } from "@/app/components/badge"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/app/components/table"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/app/components/dropdown-menu"
+import { Input } from "@/app/components/input"
+import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/avatar"
 import { Edit, MoreHorizontal, Search, Trash, UserPlus } from "lucide-react"
 import ProtectedRoute from "@/components/protected-route"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/app/components/use-toast"
 
 // Datos de ejemplo para los usuarios
 const mockUsers = [
