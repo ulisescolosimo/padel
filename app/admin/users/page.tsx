@@ -70,6 +70,7 @@ const mockUsers = [
 export default function AdminUsersPage() {
   const [users, setUsers] = useState(mockUsers)
   const [searchTerm, setSearchTerm] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
 
   const handleDeleteUser = (id: string) => {

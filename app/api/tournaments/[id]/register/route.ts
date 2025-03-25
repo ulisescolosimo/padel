@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import Tournament from '@/models/Tournament';
 import { getServerSession } from 'next-auth';
 import { connectDB } from '@/lib/db';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import mongoose from 'mongoose';
 
 export async function POST(

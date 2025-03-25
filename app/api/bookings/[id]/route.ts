@@ -3,7 +3,7 @@ import { connectDB } from '@/lib/db'
 import Booking from '@/models/Booking'
 import { ApiError, handleApiError } from '@/lib/api'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../../auth/[...nextauth]/route'
+import { authOptions } from '../../auth/[...nextauth]/auth'
 
 // Obtener una reserva específica
 export async function GET(

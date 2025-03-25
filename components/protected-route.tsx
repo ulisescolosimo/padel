@@ -13,12 +13,16 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ children, requireAdmin = false }: ProtectedRouteProps) {
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
 
+  const isAdmin = () => {
+    return user?.role === "admin"
+  }
+
   useEffect(() => {
-    if (!isLoading) {
+    if (!loading) {
       if (!user) {
         // Guardar la ruta actual para redirigir después del login
         localStorage.setItem("redirectAfterLogin", pathname)
@@ -27,9 +31,9 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
         router.push("/dashboard")
       }
     }
-  }, [user, isLoading, requireAdmin, router, pathname, isAdmin])
+  }, [user, loading, requireAdmin, router, pathname])
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -38,7 +42,7 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
   }
 
   // Si no está cargando y hay un usuario (y es admin si se requiere), mostrar el contenido
-  if (!isLoading && user && (!requireAdmin || isAdmin())) {
+  if (!loading && user && (!requireAdmin || isAdmin())) {
     return <>{children}</>
   }
 
