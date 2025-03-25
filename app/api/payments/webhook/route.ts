@@ -6,17 +6,14 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     
-    // Verificar que es una notificación de pago
+    // Verificar que sea una notificación de pago
     if (body.type !== 'payment') {
       return NextResponse.json({ message: 'Not a payment notification' });
     }
 
-    const { data } = body;
+    const paymentId = body.data.id;
     
-    // Obtener el ID del pago
-    const paymentId = data.id;
-    
-    // Obtener los detalles del pago
+    // Obtener detalles del pago de MercadoPago
     const response = await fetch(
       `https://api.mercadopago.com/v1/payments/${paymentId}`,
       {
@@ -28,31 +25,45 @@ export async function POST(request: Request) {
 
     const payment = await response.json();
 
-    // Obtener la referencia externa (tournamentId-userId)
+    // Verificar que el pago esté aprobado
+    if (payment.status !== 'approved') {
+      return NextResponse.json({ message: 'Payment not approved' });
+    }
+
+    // Obtener tournamentId y userId del external_reference
     const [tournamentId, userId] = payment.external_reference.split('-');
 
     await connectDB();
 
-    // Actualizar el estado del pago en el torneo
-    await Tournament.findOneAndUpdate(
+    // Registrar al participante en el torneo
+    const tournament = await Tournament.findOneAndUpdate(
+      { _id: tournamentId },
       {
-        _id: tournamentId,
-        'participants.player': userId,
-      },
-      {
-        $set: {
-          'participants.$.paymentStatus': payment.status,
-          'participants.$.paymentId': paymentId,
-          'participants.$.paymentDate': new Date(),
+        $push: {
+          participants: {
+            userId,
+            status: 'confirmed',
+            paymentId,
+            paymentStatus: 'approved',
+            registeredAt: new Date(),
+          },
         },
-      }
+      },
+      { new: true }
     );
 
-    return NextResponse.json({ message: 'Payment processed' });
+    if (!tournament) {
+      return NextResponse.json(
+        { error: 'Torneo no encontrado' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ message: 'Payment processed successfully' });
   } catch (error) {
-    console.error('Error processing webhook:', error);
+    console.error('Error processing payment:', error);
     return NextResponse.json(
-      { error: 'Error processing webhook' },
+      { error: 'Error processing payment' },
       { status: 500 }
     );
   }

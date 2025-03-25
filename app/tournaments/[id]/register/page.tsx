@@ -294,7 +294,7 @@ export default function TournamentRegisterPage({ params }: { params: Promise<{ i
                         {isProcessingPayment ? "Procesando pago..." : "Procesando..."}
                       </>
                     ) : (
-                      "Completar inscripción"
+                      "Pagar e inscribirse"
                     )}
                   </Button>
                 </CardFooter>

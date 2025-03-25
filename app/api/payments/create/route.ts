@@ -51,6 +51,18 @@ export async function POST(request: Request) {
       );
     }
 
+    // Verificar si el usuario ya está registrado
+    const isAlreadyRegistered = tournament.participants.some(
+      (p: any) => p.userId.toString() === session.user.id
+    );
+
+    if (isAlreadyRegistered) {
+      return NextResponse.json(
+        { error: 'Ya estás registrado en este torneo' },
+        { status: 400 }
+      );
+    }
+
     const baseUrl = getBaseUrl();
 
     // Crear preferencia de pago
